@@ -111,4 +111,20 @@ class ShoppingCart
             echo '<br>' . 'Product at index : ' . $index . ' is not a Product.';
         }
     }
+
+    public function showTotalPrice()
+    {
+        $tmpListProduct = $this->getListProducts();
+        $totalPrice = 0;
+
+        foreach ($tmpListProduct as $product) {
+
+            if ($product instanceof Products) {
+                $totalPrice += $product->getPrice();
+            }
+        }
+
+        return '<br>' . $totalPrice;
+    }
+
 }

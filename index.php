@@ -29,11 +29,13 @@ $user1->showInfo();
 
 newLine();
 
-$user1->getShoppingCart()->showInfo();
+$myShoppingCart = $user1->getShoppingCart();
+
+$myShoppingCart->showInfo();
 
 newLine();
 
-$result = $user1->getShoppingCart()->addProducts([
+$myShoppingCart->addProducts([
     [
         'name' => 'Apple',
         'price' => 4.95
@@ -52,7 +54,75 @@ echo 'Products added.';
 
 newLine();
 
-$user1->getShoppingCart()->showInfo();
+$myShoppingCart->showInfo();
+
+newLine();
+
+echo 'Total price';
+
+echo $myShoppingCart->showTotalPrice();
+
+newLine();
+
+echo '#########################################################';
+
+newLine();
+
+echo 'Add 1 Apple';
+
+$myShoppingCart->addProducts([
+    [
+        'name' => 'Apple',
+        'price' => 4.95
+    ]
+]);
+
+echo '<br>';
+
+echo 'Added 1 Apple';
+
+newLine();
+
+$myShoppingCart->showInfo();
+
+newLine();
+
+echo 'Total price';
+
+echo $myShoppingCart->showTotalPrice();
+
+newLine();
+
+echo '#########################################################';
+
+newLine();
+
+echo 'Remove 1 Apple';
+echo '<br>';
+
+$indexRemoveProduct = $myShoppingCart->findProductByName('Apple');
+
+if ($indexRemoveProduct !== false) {
+    $resultRemove = $myShoppingCart->removeProduct($indexRemoveProduct);
+
+    if ($resultRemove) {
+        echo 'Removed 1 Apple';
+    } else {
+        echo 'Cant remove product.';
+    }
+} else {
+    echo 'No product named Apple in List Product.';
+}
+
+newLine();
+
+$myShoppingCart->showInfo();
+
+newLine();
+
+echo 'Total price';
+
+echo $myShoppingCart->showTotalPrice();
 
 newLine();
 

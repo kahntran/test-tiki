@@ -59,4 +59,5 @@ class Products
         echo '<br>' . 'Price : ' . $this->getPrice();
         echo '<br>';
     }
+
 }
