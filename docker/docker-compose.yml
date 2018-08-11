@@ -4,7 +4,7 @@ version: '3'
 
 services:
   web:
-    image: php:7.2.2-apache
+    image: test_01_image
     container_name: php_web
     volumes:
     - /home/ridingsolo/Khanh/php/projects/pj01:/var/www/html/

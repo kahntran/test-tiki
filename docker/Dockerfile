@@ -1,9 +1,14 @@
-FROM php:7.2-cli
+FROM php:7.2.2-apache
 
 # Composer & PHPUnit installation
-RUN curl -fsSL https://getcomposer.org/installer | php \
-    && mv composer.phar /usr/local/bin/composer \
-    && composer global require phpunit/phpunit ^7.0 --no-progress --no-scripts --no-interaction
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install PHPUnit
+RUN cd /tmp && curl https://phar.phpunit.de/phpunit.phar > phpunit.phar && \
+    chmod +x phpunit.phar && \
+    mv /tmp/phpunit.phar /usr/local/bin/phpunit
+
+# Set the port to 80
+EXPOSE 80
 
 ENV PATH /root/.composer/vendor/bin:$PATH
-CMD ["phpunit"]
