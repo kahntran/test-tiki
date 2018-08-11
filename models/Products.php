@@ -6,6 +6,8 @@
  * Time: 22:37
  */
 
+declare(strict_types=1);
+
 namespace models;
 
 
@@ -14,50 +16,46 @@ class Products
     private $name;
     private $price;
 
-    function __construct($name = 'test', $price = 0)
+    /**
+     * Products constructor.
+     * @param string $name
+     * @param float $price
+     */
+    public function __construct(string $name, float $price)
     {
-        $this->setName($name);
-        $this->setPrice($price);
+        $this->name = $name;
+        $this->price = $price;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getName()
+    public function getName() : string
     {
         return $this->name;
     }
 
     /**
-     * @return mixed
+     * @return float
      */
-    public function getPrice()
+    public function getPrice() : float
     {
         return $this->price;
     }
 
     /**
-     * @param mixed $name
+     * @param string $name
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
 
     /**
-     * @param mixed $price
+     * @param float $price
      */
     public function setPrice($price)
     {
         $this->price = $price;
     }
-
-    public function showInfo()
-    {
-        echo '<br>' . 'Product Info : ';
-        echo '<br>' . 'Name : ' . $this->getName();
-        echo '<br>' . 'Price : ' . $this->getPrice();
-        echo '<br>';
-    }
-
 }

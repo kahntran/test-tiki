@@ -6,6 +6,8 @@
  * Time: 22:44
  */
 
+declare(strict_types=1);
+
 namespace models;
 
 use models\Products;
@@ -13,28 +15,55 @@ use models\Products;
 
 class ShoppingCart
 {
-    private $listProducts;
+    private static $shoppingCart;
 
+    private $listProducts;
     private $user;
 
     /**
-     * @return mixed
+     * ShoppingCart constructor.
+     *
+     * @param Users $user
      */
-    public function getListProducts()
+    private function __construct(Users $user)
+    {
+        $this->user = $user;
+        $this->listProducts = [];
+    }
+
+    /**
+     * Initialize Shopping Cart
+     *
+     * @param Users $user
+     * @return ShoppingCart
+     */
+    public static function getInstance(Users $user) : ShoppingCart
+    {
+        if (is_null(self::$shoppingCart)) {
+            self::$shoppingCart = new ShoppingCart($user);
+        }
+
+        return self::$shoppingCart;
+    }
+
+    /**
+     * @return array
+     */
+    public function getListProducts() : array
     {
         return $this->listProducts;
     }
 
     /**
-     * @return mixed
+     * @return Users
      */
-    public function getUser()
+    public function getUser() : Users
     {
         return $this->user;
     }
 
     /**
-     * @param mixed $listProducts
+     * @param array $listProducts
      */
     public function setListProducts(array $listProducts)
     {
@@ -42,89 +71,78 @@ class ShoppingCart
     }
 
     /**
-     * @param mixed $user
+     * @param Users $user
      */
-    public function setUser($user)
+    public function setUser(Users $user)
     {
         $this->user = $user;
     }
 
+    /**
+     * Get total price in Shopping Cart
+     *
+     * @return float
+     */
+    public function getTotalPrice() : float
+    {
+        $totalPrice = 0.0;
+
+        foreach ($this->listProducts as $product) {
+            if ($product instanceof Products) {
+                $totalPrice += $product->getPrice();
+            }
+        }
+
+        return $totalPrice;
+    }
+
+    /**
+     * Add Product into Shopping Cart
+     *
+     * @param \models\Products $product
+     */
     public function addProduct(Products $product)
     {
         $this->listProducts[] = $product;
     }
 
-    public function addProducts(array $listProduct)
-    {
-        foreach ($listProduct as $product) {
-            $this->addProduct(new Products($product['name'], $product['price']));
-        }
-    }
-
-    public function removeProduct($index = 0)
+    /**
+     * Remove Product out of Shopping Cart
+     *
+     * @param int $index
+     * @return bool
+     */
+    public function removeProduct($index = 0) : bool
     {
         $tmpListProduct = $this->getListProducts();
 
-        if ( ! is_int($index) || $index < 0 || $index > count($tmpListProduct) - 1 ) {
+        if ( ! is_int($index) || $index <= 0 || $index > count($tmpListProduct) ) {
             return false;
         }
 
-        unset($tmpListProduct[$index]);
+        unset($tmpListProduct[$index - 1]);
 
         $this->setListProducts($tmpListProduct);
 
         return true;
     }
 
-    public function findProductByName($productName)
+    /**
+     * Find Product by name in Shopping Cart
+     *
+     * @param string $productName
+     * @return int
+     */
+    public function findProductByName(string $productName) : int
     {
         $tmpListProduct = $this->getListProducts();
 
         foreach ($tmpListProduct as $index => $product) {
-
             if ($product instanceof Products && $product->getName() === $productName) {
-                return $index;
+                return $index + 1;
             }
         }
 
-        return false;
+        return 0;
     }
-
-    public function showInfo()
-    {
-        $tmpListProduct = $this->getListProducts();
-
-        if (empty($tmpListProduct)) {
-            echo 'List Products is empty';
-            return;
-        }
-
-        echo '<br>' . 'List Products : ';
-
-        foreach ($tmpListProduct as $index => $product) {
-
-            if ($product instanceof Products) {
-                $product->showInfo();
-                continue;
-            }
-
-            echo '<br>' . 'Product at index : ' . $index . ' is not a Product.';
-        }
-    }
-
-    public function showTotalPrice()
-    {
-        $tmpListProduct = $this->getListProducts();
-        $totalPrice = 0;
-
-        foreach ($tmpListProduct as $product) {
-
-            if ($product instanceof Products) {
-                $totalPrice += $product->getPrice();
-            }
-        }
-
-        return '<br>' . $totalPrice;
-    }
-
 }

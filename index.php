@@ -16,114 +16,73 @@ use models\Users;
 use models\ShoppingCart;
 use models\Products;
 
+echo '<br/>' . '<h3 align="center">Tiki Home Test</h3>' . '<br/>';
 
-echo '<p> Hello world </p>';
+echo '################# Initialize #################';
 
-function newLine()
-{
-    echo '<br><br>';
-}
+$apple = new Products('Apple', 4.95);
+echo '<br/>';
+echo 'One Product is created :' . '<br/>';
+echo 'Name : $' . $apple->getName() . '<br/>';
+echo 'Price : $' . $apple->getPrice() . '<br/>';
 
-$user1 = new Users('John Doe', 'john.doe@example.com');
-$user1->showInfo();
+$orange = new Products('Orange', 3.99);
+echo '<br/>';
+echo 'One Product is created :' . '<br/>';
+echo 'Name : $' . $apple->getName() . '<br/>';
+echo 'Price : $' . $apple->getPrice() . '<br/>';
 
-newLine();
+$user = Users::getInstance('John Doe', 'john.doe@example.com');
+echo '<br/>';
+echo 'One User is created :' . '<br/>';
+echo 'Name : ' . $user->getName() . '<br/>';
+echo 'Email : ' . $user->getEmail() . '<br/>';
 
-$myShoppingCart = $user1->getShoppingCart();
+$user->instanceShoppingCart($user);
+echo '<br/>';
+echo $user->getName() . '\'s Shopping Cart is created :' . '<br/>';
+echo '<pre>';
+print_r($user->getShoppingCart()->getListProducts());
+echo '</pre>';
 
-$myShoppingCart->showInfo();
+echo '<br/>' . '################# Case 1 #################' . '<br/>';
 
-newLine();
+$user->getShoppingCart()->addProduct($apple);
+$user->getShoppingCart()->addProduct($apple);
+$user->getShoppingCart()->addProduct($orange);
+echo '<br/>';
+echo 'Add Product is done :' . '<br/>';
+echo '<pre>';
+print_r($user->getShoppingCart()->getListProducts());
+echo '</pre>';
+echo 'Total price : ' . $user->getShoppingCart()->getTotalPrice() . '<br/>';
 
-$myShoppingCart->addProducts([
-    [
-        'name' => 'Apple',
-        'price' => 4.95
-    ],
-    [
-        'name' => 'Apple',
-        'price' => 4.95
-    ],
-    [
-        'name' => 'Orange',
-        'price' => 3.99
-    ]
-]);
+echo '<br/>' . '################# Case 2 #################' . '<br/>';
 
-echo 'Products added.';
+$user->getShoppingCart()->addProduct($apple);
+echo '<br/>';
+echo 'Add Product is done :' . '<br/>';
+echo '<pre>';
+print_r($user->getShoppingCart()->getListProducts());
+echo '</pre>';
+echo 'Total price : ' . $user->getShoppingCart()->getTotalPrice() . '<br/>';
 
-newLine();
-
-$myShoppingCart->showInfo();
-
-newLine();
-
-echo 'Total price';
-
-echo $myShoppingCart->showTotalPrice();
-
-newLine();
-
-echo '#########################################################';
-
-newLine();
-
-echo 'Add 1 Apple';
-
-$myShoppingCart->addProducts([
-    [
-        'name' => 'Apple',
-        'price' => 4.95
-    ]
-]);
-
-echo '<br>';
-
-echo 'Added 1 Apple';
-
-newLine();
-
-$myShoppingCart->showInfo();
-
-newLine();
-
-echo 'Total price';
-
-echo $myShoppingCart->showTotalPrice();
-
-newLine();
-
-echo '#########################################################';
-
-newLine();
-
-echo 'Remove 1 Apple';
-echo '<br>';
-
-$indexRemoveProduct = $myShoppingCart->findProductByName('Apple');
-
-if ($indexRemoveProduct !== false) {
-    $resultRemove = $myShoppingCart->removeProduct($indexRemoveProduct);
-
-    if ($resultRemove) {
-        echo 'Removed 1 Apple';
-    } else {
-        echo 'Cant remove product.';
-    }
+$shoppingCart = ShoppingCart::getInstance($user);
+$indexApple = $shoppingCart->findProductByName('Apple');
+echo '<br/>';
+if ($indexApple === 0) {
+    echo 'Cant find Product' . '<br/>';
 } else {
-    echo 'No product named Apple in List Product.';
+    $resultRemove = $shoppingCart->removeProduct($indexApple);
+    if ($resultRemove) {
+        echo 'Remove Product is done :' . '<br/>';
+        echo '<pre>';
+        print_r($shoppingCart->getListProducts());
+        echo '</pre>';
+        echo 'Total price : ' . $user->getShoppingCart()->getTotalPrice() . '<br/>';
+    } else {
+        echo 'Cant remove Product at index : ' . $indexApple . '<br/>';
+    }
 }
 
-newLine();
-
-$myShoppingCart->showInfo();
-
-newLine();
-
-echo 'Total price';
-
-echo $myShoppingCart->showTotalPrice();
-
-newLine();
-
-echo 'The End';
+echo '<br/>' . '<h3 align="center">The End</h3>';

@@ -6,6 +6,8 @@
  * Time: 22:41
  */
 
+declare(strict_types=1);
+
 namespace models;
 
 use models\ShoppingCart;
@@ -13,80 +15,93 @@ use models\ShoppingCart;
 
 class Users
 {
+    private static $user;
+
     private $name;
     private $email;
-
     private $shoppingCart;
 
     /**
-     * @return mixed
+     * Users constructor.
+     *
+     * @param string $name
+     * @param string $email
      */
-    public function getName()
+    private function __construct($name, $email)
+    {
+        $this->name = $name;
+        $this->email = $email;
+    }
+
+    /**
+     * Initialize User
+     *
+     * @param string $name
+     * @param string $email
+     * @return Users
+     */
+    public static function getInstance(string $name, string $email) : Users
+    {
+        if (is_null(self::$user)) {
+            self::$user = new Users($name, $email);
+        }
+
+        return self::$user;
+    }
+
+    /**
+     * Initialize User's ShoppingCart
+     */
+    public function instanceShoppingCart()
+    {
+        $this->shoppingCart = ShoppingCart::getInstance(self::$user);
+    }
+
+    /**
+     * @return string
+     */
+    public function getName() : string
     {
         return $this->name;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getEmail()
+    public function getEmail() : string
     {
         return $this->email;
     }
 
     /**
-     * @return mixed
+     * @return ShoppingCart
      */
-    public function getShoppingCart()
+    public function getShoppingCart() : ShoppingCart
     {
         return $this->shoppingCart;
     }
 
     /**
-     * @param mixed $name
+     * @param string $name
      */
-    public function setName($name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
 
     /**
-     * @param mixed $email
+     * @param string $email
      */
-    public function setEmail($email)
+    public function setEmail(string $email)
     {
         $this->email = $email;
     }
 
     /**
-     * @param mixed $shoppingCart
+     * @param ShoppingCart $shoppingCart
      */
     public function setShoppingCart(ShoppingCart $shoppingCart)
     {
         $this->shoppingCart = $shoppingCart;
     }
-
-    function __construct($name = 'test', $email = 'abc@test.com')
-    {
-        $this->setName($name);
-        $this->setEmail($email);
-        $this->setShoppingCart(new ShoppingCart());
-    }
-
-    public function showInfo()
-    {
-        echo '<br>' . 'Name : ' . $this->getName();
-        echo '<br>' . 'Email : ' . $this->getEmail();
-    }
-
-    public function showShoppingCart()
-    {
-        if ($this->shoppingCart instanceof ShoppingCart) {
-            $this->shoppingCart->showInfo();
-            return true;
-        }
-
-        return false;
-    }
-
 }
