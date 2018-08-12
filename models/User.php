@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ridingsolo
- * Date: 09/08/2018
- * Time: 22:41
- */
 
 declare(strict_types=1);
 
@@ -13,7 +7,7 @@ namespace models;
 use models\ShoppingCart;
 
 
-class Users
+class User
 {
     private static $user;
 
@@ -38,12 +32,12 @@ class Users
      *
      * @param string $name
      * @param string $email
-     * @return Users
+     * @return User
      */
-    public static function getInstance(string $name, string $email) : Users
+    public static function getInstance(string $name, string $email) : User
     {
         if (is_null(self::$user)) {
-            self::$user = new Users($name, $email);
+            self::$user = new User($name, $email);
         }
 
         return self::$user;
@@ -52,9 +46,25 @@ class Users
     /**
      * Initialize User's ShoppingCart
      */
-    public function instanceShoppingCart()
+    public function initializeShoppingCart() : void
     {
         $this->shoppingCart = ShoppingCart::getInstance(self::$user);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getShoppingCart()
+    {
+        return $this->shoppingCart;
+    }
+
+    /**
+     * @param mixed $shoppingCart
+     */
+    public function setShoppingCart($shoppingCart): void
+    {
+        $this->shoppingCart = $shoppingCart;
     }
 
     /**
@@ -66,6 +76,14 @@ class Users
     }
 
     /**
+     * @param string $name
+     */
+    public function setName(string $name) : void
+    {
+        $this->name = $name;
+    }
+
+    /**
      * @return string
      */
     public function getEmail() : string
@@ -74,34 +92,10 @@ class Users
     }
 
     /**
-     * @return ShoppingCart
-     */
-    public function getShoppingCart() : ShoppingCart
-    {
-        return $this->shoppingCart;
-    }
-
-    /**
-     * @param string $name
-     */
-    public function setName(string $name)
-    {
-        $this->name = $name;
-    }
-
-    /**
      * @param string $email
      */
-    public function setEmail(string $email)
+    public function setEmail(string $email) : void
     {
         $this->email = $email;
-    }
-
-    /**
-     * @param ShoppingCart $shoppingCart
-     */
-    public function setShoppingCart(ShoppingCart $shoppingCart)
-    {
-        $this->shoppingCart = $shoppingCart;
     }
 }

@@ -1,46 +1,43 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ridingsolo
- * Date: 09/08/2018
- * Time: 22:44
- */
 
 declare(strict_types=1);
 
 namespace models;
 
-use models\Products;
+use models\Product;
 
 
 class ShoppingCart
 {
     private static $shoppingCart;
 
-    private $listProducts;
+    private $products;
     private $user;
 
     /**
      * ShoppingCart constructor.
      *
-     * @param Users $user
+     * @param User $user
      */
-    private function __construct(Users $user)
+    private function __construct(User $user)
     {
         $this->user = $user;
-        $this->listProducts = [];
+        $this->products = [];
     }
 
     /**
      * Initialize Shopping Cart
      *
-     * @param Users $user
+     * @param User $user
      * @return ShoppingCart
      */
-    public static function getInstance(Users $user) : ShoppingCart
+    public static function getInstance(User $user) : ShoppingCart
     {
         if (is_null(self::$shoppingCart)) {
             self::$shoppingCart = new ShoppingCart($user);
+            if (is_null($user->getShoppingCart())) {
+                $user->setShoppingCart(self::$shoppingCart);
+            }
         }
 
         return self::$shoppingCart;
@@ -49,31 +46,31 @@ class ShoppingCart
     /**
      * @return array
      */
-    public function getListProducts() : array
+    public function getProducts() : array
     {
-        return $this->listProducts;
+        return $this->products;
     }
 
     /**
-     * @return Users
+     * @param array $products
      */
-    public function getUser() : Users
+    public function setProducts(array $products)
+    {
+        $this->products = $products;
+    }
+
+    /**
+     * @return User
+     */
+    public function getUser() : User
     {
         return $this->user;
     }
 
     /**
-     * @param array $listProducts
+     * @param User $user
      */
-    public function setListProducts(array $listProducts)
-    {
-        $this->listProducts = $listProducts;
-    }
-
-    /**
-     * @param Users $user
-     */
-    public function setUser(Users $user)
+    public function setUser(User $user) : void
     {
         $this->user = $user;
     }
@@ -87,9 +84,9 @@ class ShoppingCart
     {
         $totalPrice = 0.0;
 
-        foreach ($this->listProducts as $product) {
-            if ($product instanceof Products) {
-                $totalPrice += $product->getPrice();
+        foreach ($this->products as $item) {
+            if ($item['product'] instanceof Product) {
+                $totalPrice += $item['product']->getPrice() * $item['quantity'];
             }
         }
 
@@ -99,46 +96,65 @@ class ShoppingCart
     /**
      * Add Product into Shopping Cart
      *
-     * @param \models\Products $product
+     * @param \models\Product $product
+     * @param int $quantity
+     * @return bool
      */
-    public function addProduct(Products $product)
+    public function add(Product $product, int $quantity = 1) : bool
     {
-        $this->listProducts[] = $product;
+        if ($quantity < 1) {
+            return false;
+        }
+        
+        $indexProduct = $this->findProductByName($product);
+        
+        if ($indexProduct === 0) {
+            $this->products[] = [
+                'product' => $product,
+                'quantity' => $quantity
+            ];
+            return true;
+        }
+        
+        $this->products[$indexProduct - 1]['product'] = $product;
+        $this->products[$indexProduct - 1]['quantity'] += $quantity;
+        return true;
     }
 
     /**
      * Remove Product out of Shopping Cart
      *
-     * @param int $index
+     * @param \models\Product $product
+     * @param int $quantity
      * @return bool
      */
-    public function removeProduct($index = 0) : bool
+    public function remove(Product $product, int $quantity = 1) : bool
     {
-        $tmpListProduct = $this->getListProducts();
+        $indexProduct = $this->findProductByName($product);
 
-        if ( ! is_int($index) || $index <= 0 || $index > count($tmpListProduct) ) {
+        if ( $indexProduct < 1) {
             return false;
         }
 
-        unset($tmpListProduct[$index - 1]);
+        if ($this->products[$indexProduct - 1]['quantity'] <= $quantity) {
+            unset($this->products[$indexProduct - 1]);
+            return true;
+        }
 
-        $this->setListProducts($tmpListProduct);
-
+        $this->products[$indexProduct - 1]['quantity'] -= $quantity;
         return true;
     }
 
     /**
      * Find Product by name in Shopping Cart
      *
-     * @param string $productName
+     * @param \models\Product $product
      * @return int
      */
-    public function findProductByName(string $productName) : int
+    public function findProductByName(Product $product) : int
     {
-        $tmpListProduct = $this->getListProducts();
-
-        foreach ($tmpListProduct as $index => $product) {
-            if ($product instanceof Products && $product->getName() === $productName) {
+        foreach ($this->products as $index => $item) {
+            if ($item['product'] instanceof Product && $item['product']->getName() === $product->getName()) {
                 return $index + 1;
             }
         }

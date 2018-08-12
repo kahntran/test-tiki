@@ -1,17 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ridingsolo
- * Date: 09/08/2018
- * Time: 22:37
- */
 
 declare(strict_types=1);
 
 namespace models;
 
 
-class Products
+class Product
 {
     private $name;
     private $price;
@@ -36,6 +30,14 @@ class Products
     }
 
     /**
+     * @param string $name
+     */
+    public function setName(string $name) : void
+    {
+        $this->name = $name;
+    }
+
+    /**
      * @return float
      */
     public function getPrice() : float
@@ -44,17 +46,9 @@ class Products
     }
 
     /**
-     * @param string $name
-     */
-    public function setName(string $name)
-    {
-        $this->name = $name;
-    }
-
-    /**
      * @param float $price
      */
-    public function setPrice($price)
+    public function setPrice($price) : void
     {
         $this->price = $price;
     }
