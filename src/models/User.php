@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace models;
+namespace App\models;
 
-use models\ShoppingCart;
+use App\models\ShoppingCart;
 
 
 class User

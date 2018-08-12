@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace models;
+namespace App\models;
 
-use models\Product;
+use App\models\Product;
 
 
 class ShoppingCart
@@ -96,7 +96,7 @@ class ShoppingCart
     /**
      * Add Product into Shopping Cart
      *
-     * @param \models\Product $product
+     * @param \App\models\Product $product
      * @param int $quantity
      * @return bool
      */
@@ -124,7 +124,7 @@ class ShoppingCart
     /**
      * Remove Product out of Shopping Cart
      *
-     * @param \models\Product $product
+     * @param \App\models\Product $product
      * @param int $quantity
      * @return bool
      */
@@ -148,7 +148,7 @@ class ShoppingCart
     /**
      * Find Product by name in Shopping Cart
      *
-     * @param \models\Product $product
+     * @param \App\models\Product $product
      * @return int
      */
     public function findProductByName(Product $product) : int
