@@ -6,7 +6,7 @@
 2. Move to folder docker.
 
 3. Build Docker image
-    * Use command: docker build -t [image name] .
+    * Use command: docker build -t test_01_image .
 
 4. Build Docker container
     * Use command: docker-compose up -d (or 'sudo docker-compose up -d') in Terminal.
